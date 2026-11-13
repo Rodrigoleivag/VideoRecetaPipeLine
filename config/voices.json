@@ -1,0 +1,68 @@
+{
+  "defaultPreset": "grave",
+  "presets": {
+    "estandar": { "label": "Estándar", "rate": "-4%", "pitch": "-8Hz" },
+    "grave": { "label": "Grave (recomendado)", "rate": "-8%", "pitch": "-20Hz" },
+    "profundo": { "label": "Muy grave / cinematográfico", "rate": "-12%", "pitch": "-32Hz" },
+    "pausado": { "label": "Pausado y didáctico", "rate": "-16%", "pitch": "-18Hz" },
+    "energico": { "label": "Enérgico", "rate": "+6%", "pitch": "-10Hz" }
+  },
+  "catalog": [
+    {
+      "id": "es-ES-AlvaroNeural",
+      "label": "Álvaro",
+      "gender": "male",
+      "accent": "España (castellano)",
+      "description": "Voz masculina grave y cálida, la más natural para narración gastronómica.",
+      "presets": ["estandar", "grave", "profundo", "pausado", "energico"]
+    },
+    {
+      "id": "es-ES-ElviraNeural",
+      "label": "Elvira",
+      "gender": "female",
+      "accent": "España (castellano)",
+      "description": "Voz femenina cercana y nítida, ritmo tranquilo.",
+      "presets": ["estandar", "pausado", "energico"]
+    },
+    {
+      "id": "es-ES-XimenaNeural",
+      "label": "Ximena",
+      "gender": "female",
+      "accent": "España (castellano)",
+      "description": "Voz femenina joven, tono luminoso para recetas rápidas.",
+      "presets": ["estandar", "energico"]
+    },
+    {
+      "id": "es-MX-JorgeNeural",
+      "label": "Jorge",
+      "gender": "male",
+      "accent": "México",
+      "description": "Voz masculina media, acento mexicano.",
+      "presets": ["estandar", "grave"]
+    },
+    {
+      "id": "es-AR-TomasNeural",
+      "label": "Tomás",
+      "gender": "male",
+      "accent": "Argentina",
+      "description": "Voz masculina joven, acento rioplatense.",
+      "presets": ["estandar", "energico"]
+    },
+    {
+      "id": "es-CO-GonzaloNeural",
+      "label": "Gonzalo",
+      "gender": "male",
+      "accent": "Colombia",
+      "description": "Voz masculina cálida, acento colombiano.",
+      "presets": ["estandar", "grave"]
+    },
+    {
+      "id": "es-CL-LorenzoNeural",
+      "label": "Lorenzo",
+      "gender": "male",
+      "accent": "Chile",
+      "description": "Voz masculina grave, acento chileno.",
+      "presets": ["estandar", "grave"]
+    }
+  ]
+}

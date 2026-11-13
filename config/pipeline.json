@@ -1,0 +1,175 @@
+{
+  "workspace": "work",
+  "output": "out",
+  "video": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "crf": 20,
+    "preset": "medium",
+    "sceneGap": 0.35,
+    "leadIn": 1.2,
+    "tailOut": 2,
+    "motions": [
+      "zoom-in",
+      "pan-right",
+      "zoom-out",
+      "pan-left"
+    ]
+  },
+  "audio": {
+    "targetLufs": -16,
+    "truePeakDb": -1.5
+  },
+  "subtitles": {
+    "enabled": true,
+    "font": "Montserrat SemiBold",
+    "fontSize": 62,
+    "marginV": 92,
+    "marginLR": 140,
+    "primaryColour": "&H00FFFFFF&",
+    "highlightColour": "&H005CE000&",
+    "outlineColour": "&H00000000&",
+    "backColour": "&H80000000&",
+    "outline": 5,
+    "shadow": 2,
+    "maxCharsPerLine": 38,
+    "maxLines": 2,
+    "maxGapToHold": 0.28
+  },
+  "voice": {
+    "provider": "edge",
+    "voice": "es-ES-AlvaroNeural",
+    "preset": "grave",
+    "rate": null,
+    "pitch": null,
+    "volume": "+0%"
+  },
+  "script": {
+    "provider": "template",
+    "targetMinutes": 4,
+    "wordsPerMinute": 148,
+    "tone": "cercano",
+    "allowFallback": true,
+    "llm": {
+      "baseUrl": "https://api.deepseek.com",
+      "model": "deepseek-chat",
+      "apiKeyEnv": "DEEPSEEK_API_KEY",
+      "temperature": 0.85,
+      "timeoutMs": 150000
+    }
+  },
+  "images": {
+    "providers": [
+      "commons",
+      "openverse",
+      "foodish",
+      "pexels"
+    ],
+    "maxPerScene": 1,
+    "minWidth": 640
+  },
+  "music": {
+    "enabled": true,
+    "provider": "jamendo",
+    "volume": 0.16,
+    "fadeIn": 2,
+    "fadeOut": 3,
+    "candidates": 8,
+    "ducking": {
+      "threshold": 0.05,
+      "ratio": 12,
+      "attack": 20,
+      "release": 400
+    },
+    "moods": [
+      {
+        "when": [
+          "queso",
+          "horno",
+          "gratinado",
+          "fundido",
+          "aperitivo"
+        ],
+        "query": "jazz lounge",
+        "genre": "Jazz / lounge"
+      },
+      {
+        "when": [
+          "postre",
+          "tarta",
+          "chocolate",
+          "dulce",
+          "repostería"
+        ],
+        "query": "bossa nova",
+        "genre": "Bossa nova"
+      },
+      {
+        "when": [
+          "carne",
+          "asado",
+          "parrilla",
+          "guiso"
+        ],
+        "query": "blues rock",
+        "genre": "Rock / blues"
+      },
+      {
+        "when": [
+          "pasta",
+          "italiana",
+          "pizza",
+          "risotto"
+        ],
+        "query": "italian pop",
+        "genre": "Pop italiano"
+      },
+      {
+        "when": [
+          "ensalada",
+          "verano",
+          "fresco",
+          "sano",
+          "vegetariano"
+        ],
+        "query": "acoustic pop",
+        "genre": "Pop acústico"
+      },
+      {
+        "when": [
+          "cuchara",
+          "invierno",
+          "casero",
+          "legumbres"
+        ],
+        "query": "folk acoustic",
+        "genre": "Folk"
+      },
+      {
+        "when": [
+          "rápido",
+          "express",
+          "tapas",
+          "picoteo"
+        ],
+        "query": "upbeat pop",
+        "genre": "Pop"
+      }
+    ],
+    "fallbackGenres": [
+      "bossa nova",
+      "hip hop",
+      "trap",
+      "pop",
+      "rock"
+    ]
+  },
+  "aiClips": {
+    "enabled": false,
+    "provider": "none",
+    "endpoint": "",
+    "apiKeyEnv": "AI_VIDEO_API_KEY",
+    "model": ""
+  }
+}

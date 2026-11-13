@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar Música - VideoRecetaPipeLine</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0d0d0d;
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 8px; }
+    .subtitle { color: #999; margin-bottom: 24px; }
+    .recipe-info {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .recipe-thumb {
+      width: 80px;
+      height: 45px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: #222;
+    }
+    .recipe-details h2 { font-size: 1rem; font-weight: 600; }
+    .recipe-details p { color: #888; font-size: 0.875rem; margin-top: 4px; }
+    .section-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: #00d46a;
+      border-radius: 2px;
+    }
+    .tracks { display: grid; gap: 12px; }
+    .track {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: grid;
+      grid-template-columns: 48px 1fr 120px;
+      gap: 16px;
+      align-items: center;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .track:hover { border-color: #00d46a; background: #1a1a1a; }
+    .track.selected { border-color: #00d46a; background: #0a1a0d; }
+    .track.selected::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: #00d46a; border-radius: 12px 0 0 12px; }
+    .track-thumb { width: 48px; height: 48px; border-radius: 8px; background: linear-gradient(135deg, #00d46a, #00994d); display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700; font-size: 1.25rem; }
+    .track-info { min-width: 0; }
+    .track-title { font-weight: 600; font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track-artist { color: #888; font-size: 0.875rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .track-meta { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; text-align: right; }
+    .track-duration { font-family: monospace; font-size: 0.875rem; color: #aaa; }
+    .track-genre { font-size: 0.75rem; color: #00d46a; text-transform: uppercase; letter-spacing: 0.5px; }
+    .track-provider { font-size: 0.7rem; color: #666; }
+    .audio-player { width: 100%; margin-top: 12px; height: 32px; }
+    .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: #00d46a;
+      color: #000;
+      width: 100%;
+      margin-top: 24px;
+    }
+    .btn-primary:disabled { background: #333; color: #666; cursor: not-allowed; }
+    .btn-primary:hover:not(:disabled) { box-shadow: 0 0 24px rgba(0, 212, 106, 0.4); }
+    .btn-secondary { background: #2a2a2a; color: #e8e8e8; }
+    .status { padding: 12px 16px; border-radius: 8px; margin-top: 16px; font-size: 0.875rem; display: none; }
+    .status.loading { display: block; background: #1a1a2e; color: #00d4ff; border: 1px solid #00d4ff40; }
+    .status.success { display: block; background: #0a1a0d; color: #00d46a; border: 1px solid #00d46a40; }
+    .status.error { display: block; background: #2a0a0a; color: #ff6b6b; border: 1px solid #ff6b6b40; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #00d4ff40; border-top-color: #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 48px 24px; color: #666; }
+    @media (max-width: 640px) {
+      .track { grid-template-columns: 40px 1fr; grid-template-rows: auto auto; }
+      .track-meta { grid-column: 2; flex-direction: row; justify-content: space-between; align-items: flex-start; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 Seleccionar Música</h1>
+    <p class="subtitle">Elige la pista perfecta para tu vídeo</p>
+
+    <div class="recipe-info">
+      <img class="recipe-thumb" id="thumb" src="" alt="">
+      <div class="recipe-details">
+        <h2 id="recipeTitle">Cargando...</h2>
+        <p id="recipeMeta"></p>
+      </div>
+    </div>
+
+    <div class="section-title">Pistas disponibles</div>
+    <div class="tracks" id="tracks">
+      <div class="empty-state">Buscando pistas...</div>
+    </div>
+
+    <button class="btn btn-primary" id="renderBtn" disabled>Renderizar vídeo</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <template id="trackTemplate">
+    <div class="track" data-index="">
+      <div class="track-thumb">♪</div>
+      <div class="track-info">
+        <div class="track-title"></div>
+        <div class="track-artist"></div>
+      </div>
+      <div class="track-meta">
+        <span class="track-duration"></span>
+        <span class="track-genre"></span>
+        <span class="track-provider"></span>
+      </div>
+      <audio class="audio-player" controls preload="metadata"></audio>
+    </div>
+  </template>
+
+  <script>    const slug = new URLSearchParams(window.location.search).get('slug') || 'solomillo-wellington';
+    let candidates = [];
+    let selectedIndex = -1;
+    let audioElements = [];
+
+    async function loadCandidates() {
+      console.log('[TRACE] loadCandidates: INICIO');
+      try {
+        console.log('[TRACE] loadCandidates: Actualizando UI - Conectando con API...');
+        document.getElementById('tracks').innerHTML = '<div class="empty-state">Conectando con API...</div>';
+        console.log('[TRACE] loadCandidates: Haciendo fetch a /api/music/candidates');
+        const res = await fetch('/api/music/candidates', { method: 'POST' });
+        console.log('[TRACE] loadCandidates: Fetch completado, status:', res.status);
+        console.log('[TRACE] loadCandidates: Actualizando UI - API respondió, procesando...');
+        document.getElementById('tracks').innerHTML = '<div class="empty-state">API respondió, procesando...</div>';
+        const data = await res.json();
+        console.log('[TRACE] loadCandidates: JSON parseado, candidates:', data.candidates?.length);
+        candidates = data.candidates;
+        console.log('[TRACE] loadCandidates: Llamando renderTracks()');
+        renderTracks();
+        console.log('[TRACE] loadCandidates: Llamando updateRenderBtn()');
+        updateRenderBtn();
+        console.log('[TRACE] loadCandidates: FIN OK');
+      } catch (e) {
+        console.error('[TRACE] loadCandidates: ERROR:', e);
+        document.getElementById('tracks').innerHTML = '<div class="empty-state" style="color: #ff6b6b;">Error: ' + e.message + '</div>';
+      }
+    }
+
+    function renderTracks() {
+      console.log('[TRACE] renderTracks: INICIO');
+      console.log('[TRACE] renderTracks: Actualizando UI - Renderizando pistas...');
+      const container = document.getElementById('tracks');
+      const template = document.getElementById('trackTemplate');
+      console.log('[TRACE] renderTracks: container encontrado:', !!container);
+      console.log('[TRACE] renderTracks: template encontrado:', !!template);
+      container.innerHTML = '<div class="empty-state">Renderizando pistas...</div>';
+
+      if (!template) {
+        console.error('[TRACE] renderTracks: ERROR - Template no encontrado');
+        container.innerHTML = '<div class="empty-state" style="color: #ff6b6b;">Error: Template no encontrado</div>';
+        return;
+      }
+
+      if (candidates.length === 0) {
+        console.log('[TRACE] renderTracks: No hay candidates');
+        container.innerHTML = '<div class="empty-state">No se encontraron pistas</div>';
+        return;
+      }
+
+      console.log('[TRACE] renderTracks: Limpiando container, candidates:', candidates.length);
+      container.innerHTML = '';
+
+      candidates.forEach((c, i) => {
+        console.log('[TRACE] renderTracks: Procesando track', i, c.title);
+        const node = template.content.cloneNode(true);
+        const track = node.querySelector('.track');
+        track.dataset.index = i;
+        track.querySelector('.track-title').textContent = c.title;
+        track.querySelector('.track-artist').textContent = c.artist;
+        track.querySelector('.track-duration').textContent = c.duration;
+        track.querySelector('.track-genre').textContent = c.genre;
+        track.querySelector('.track-provider').textContent = c.provider;
+
+        const audio = track.querySelector('audio');
+        audio.src = '/api/music/preview?index=' + i;
+        audioElements[i] = audio;
+
+        track.addEventListener('click', function(e) {
+          if (e.target.tagName === 'AUDIO') return;
+          selectTrack(i);
+        });
+
+        container.appendChild(node);
+      });
+
+      if (selectedIndex >= 0) {
+        selectTrack(selectedIndex);
+      }
+      console.log('[TRACE] renderTracks: FIN OK');
+    }
+
+    function selectTrack(index) {
+      selectedIndex = index;
+      document.querySelectorAll('.track').forEach(function(el, i) {
+        el.classList.toggle('selected', i === index);
+      });
+      updateRenderBtn();
+    }
+
+    function updateRenderBtn() {
+      const btn = document.getElementById('renderBtn');
+      btn.disabled = selectedIndex < 0;
+    }
+
+    function showStatus(msg, type) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status ' + type;
+    }
+
+    async function renderVideo() {
+      if (selectedIndex < 0) return;
+      const btn = document.getElementById('renderBtn');
+      btn.disabled = true;
+      showStatus('Seleccionando música y lanzando render...', 'loading');
+
+      try {
+        const res = await fetch('/api/music/choose', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ index: selectedIndex })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Error');
+
+        showStatus('✅ Música seleccionada. Render iniciado en background. El vídeo estará listo en unos minutos.', 'success');
+        btn.textContent = 'Render en progreso...';
+        
+        pollStatus();
+      } catch (e) {
+        showStatus('Error: ' + e.message, 'error');
+        btn.disabled = false;
+      }
+    }
+
+    async function pollStatus() {
+      try {
+        const res = await fetch('/api/status');
+        const data = await res.json();
+        if (data.done && data.size > 100000) {
+          showStatus('✅ ¡Vídeo listo! (' + (data.size/1024/1024).toFixed(1) + ' MB)', 'success');
+          document.getElementById('renderBtn').textContent = 'Vídeo completado';
+        } else {
+          setTimeout(pollStatus, 10000);
+        }
+      } catch {
+        setTimeout(pollStatus, 10000);
+      }
+    }
+
+    // Connect render button
+    document.getElementById('renderBtn').addEventListener('click', renderVideo);
+
+    // Load on startup
+    loadCandidates();
+    console.log('[TRACE] main: loadCandidates() llamado al cargar página');
+</script>
+</body>
+</html>
