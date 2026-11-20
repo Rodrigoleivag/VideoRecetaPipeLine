@@ -709,4 +709,5 @@ El diagnóstico comprueba Node.js, FFmpeg, FFprobe, Python, Edge TTS, tipografí
 
 ## License
 
-This repository is currently marked as private in its package configuration. Add an explicit repository license before distributing or reusing the project under open-source terms.
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
